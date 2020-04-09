@@ -12,7 +12,8 @@ describe('ClassificationGroup', () => {
   const testClassificationGroup = (group, groupedBy) => (
     <ClassificationGroup
       jobs={jobs}
-      tests={group}
+      tests={group.tests}
+      unstructuredFailures={group.unstructuredFailures}
       name="Need Investigation"
       repo={repoName}
       revision={pushHealth.revision}

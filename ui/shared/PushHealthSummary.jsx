@@ -56,6 +56,7 @@ class PushHealthSummary extends PureComponent {
     return (
       <Col xs="8" className="pl-0">
         <span className="d-flex">
+          {!healthStatus && <Spinner />}
           <a
             href={pushHealthUrl}
             title="View Push Health details for this push"
@@ -87,62 +88,55 @@ class PushHealthSummary extends PureComponent {
             </div>
           </a>
         </span>
-        {healthStatus ? (
-          <a
-            href={pushHealthUrl}
-            title="View Push Health details for this push"
-          >
-            <Row className="ml-3 mt-2">
-              <Col>
-                <Row className=" font-size-18 text-darker-secondary">
-                  Linting
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className="ml-2 mt-2 font-size-11"
-                  />
-                </Row>
-                <Row>
-                  <MetricCount
-                    failure={lintFailureCount}
-                    inProgress={lintingInProgressCount}
-                  />
-                </Row>
-              </Col>
-              <Col>
-                <Row className="font-size-18 text-darker-secondary">
-                  Builds
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className="ml-2 mt-2 font-size-11"
-                  />
-                </Row>
-                <Row>
-                  <MetricCount
-                    failure={buildFailureCount}
-                    inProgress={buildInProgressCount}
-                  />
-                </Row>
-              </Col>
-              <Col>
-                <Row className="font-size-18 text-darker-secondary">
-                  Tests
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className="ml-2 mt-2 font-size-11"
-                  />
-                </Row>
-                <Row>
-                  <MetricCount
-                    failure={testFailureCount}
-                    inProgress={testInProgressCount}
-                  />
-                </Row>
-              </Col>
-            </Row>
-          </a>
-        ) : (
-          <Spinner />
-        )}
+        <a href={pushHealthUrl} title="View Push Health details for this push">
+          <Row className="ml-3 mt-2">
+            <Col>
+              <Row className=" font-size-18 text-darker-secondary">
+                Linting
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="ml-2 mt-2 font-size-11"
+                />
+              </Row>
+              <Row>
+                <MetricCount
+                  failure={lintFailureCount}
+                  inProgress={lintingInProgressCount}
+                />
+              </Row>
+            </Col>
+            <Col>
+              <Row className="font-size-18 text-darker-secondary">
+                Builds
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="ml-2 mt-2 font-size-11"
+                />
+              </Row>
+              <Row>
+                <MetricCount
+                  failure={buildFailureCount}
+                  inProgress={buildInProgressCount}
+                />
+              </Row>
+            </Col>
+            <Col>
+              <Row className="font-size-18 text-darker-secondary">
+                Tests
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="ml-2 mt-2 font-size-11"
+                />
+              </Row>
+              <Row>
+                <MetricCount
+                  failure={testFailureCount}
+                  inProgress={testInProgressCount}
+                />
+              </Row>
+            </Col>
+          </Row>
+        </a>
       </Col>
     );
   }

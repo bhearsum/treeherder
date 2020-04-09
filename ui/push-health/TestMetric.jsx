@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 import ClassificationGroup from './ClassificationGroup';
-import { filterTests } from './helpers';
+import { filterTests, filterUnstructuredFailures } from './helpers';
 
 export default class TestMetric extends React.PureComponent {
   render() {
@@ -28,21 +28,34 @@ export default class TestMetric extends React.PureComponent {
       unInvestigateTest,
       updatePushHealth,
     } = this.props;
-    const { details } = data;
-    const { needInvestigation, knownIssues } = details;
-    let filteredNeedInvestigation = needInvestigation;
-    let filteredKnownIssues = knownIssues;
+    const {
+      details: { needInvestigation, knownIssues },
+    } = data;
+    let needInvestigationTests = needInvestigation.tests;
+    let needInvestigationUnstructuredFailures =
+      needInvestigation.unstructuredFailures;
+    let knownIssuesTests = knownIssues.tests;
+    let knownIssuesUnstructuredFailures = knownIssues.unstructuredFailures;
 
     if (searchStr.length) {
-      filteredNeedInvestigation = filterTests(needInvestigation, searchStr);
-      filteredKnownIssues = filterTests(knownIssues, searchStr);
+      needInvestigationTests = filterTests(needInvestigation.tests, searchStr);
+      knownIssuesTests = filterTests(knownIssues.tests, searchStr);
+      needInvestigationUnstructuredFailures = filterUnstructuredFailures(
+        needInvestigation.unstructuredFailures,
+        searchStr,
+      );
+      knownIssuesUnstructuredFailures = filterUnstructuredFailures(
+        knownIssues.unstructuredFailures,
+        searchStr,
+      );
     }
 
     return (
       <div className="border-bottom border-secondary">
         <ClassificationGroup
           jobs={jobs}
-          tests={filteredNeedInvestigation}
+          tests={needInvestigationTests}
+          unstructuredFailures={needInvestigationUnstructuredFailures}
           name="Possible Regressions"
           repo={repo}
           currentRepo={currentRepo}
@@ -50,7 +63,9 @@ export default class TestMetric extends React.PureComponent {
           className="mb-5"
           icon={faExclamationTriangle}
           iconColor={
-            filteredNeedInvestigation.length ? 'danger' : 'darker-secondary'
+            needInvestigationTests.length + knownIssuesTests.length
+              ? 'danger'
+              : 'darker-secondary'
           }
           expanded={testGroup === 'pr'}
           testGroup={testGroup}
@@ -79,7 +94,8 @@ export default class TestMetric extends React.PureComponent {
         />
         <ClassificationGroup
           jobs={jobs}
-          tests={filteredKnownIssues}
+          tests={knownIssuesTests}
+          unstructuredFailures={knownIssuesUnstructuredFailures}
           name="Known Issues"
           repo={repo}
           currentRepo={currentRepo}
@@ -87,7 +103,9 @@ export default class TestMetric extends React.PureComponent {
           className="mb-5"
           icon={faExclamationTriangle}
           iconColor={
-            filteredKnownIssues.length ? 'warning' : 'darker-secondary'
+            knownIssuesTests.length + knownIssuesUnstructuredFailures.length
+              ? 'warning'
+              : 'darker-secondary'
           }
           expanded={testGroup === 'ki'}
           testGroup={testGroup}
@@ -122,8 +140,14 @@ TestMetric.propTypes = {
     name: PropTypes.string.isRequired,
     result: PropTypes.string.isRequired,
     details: PropTypes.shape({
-      needInvestigation: PropTypes.array.isRequired,
-      knownIssues: PropTypes.array.isRequired,
+      needInvestigation: PropTypes.shape({
+        tests: PropTypes.array.isRequired,
+        unstructuredFailures: PropTypes.array.isRequired,
+      }),
+      knownIssues: PropTypes.shape({
+        tests: PropTypes.array.isRequired,
+        unstructuredFailures: PropTypes.array.isRequired,
+      }),
     }).isRequired,
   }).isRequired,
   repo: PropTypes.string.isRequired,
